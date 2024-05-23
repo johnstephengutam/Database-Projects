@@ -1,0 +1,1732 @@
+Please enter a MongoDB connection string (Default: mongodb://localhost/): mongodb://localhost:27017
+mongodb://localhost:27017
+Current Mongosh Log ID: 65fa48885430edc7a8a3f01c
+Connecting to:          mongodb://localhost:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.0.0
+Using MongoDB:          7.0.6
+Using Mongosh:          2.0.0
+mongosh 2.2.1 is available for download: https://www.mongodb.com/try/download/shell
+
+For mongosh info see: https://docs.mongodb.com/mongodb-shell/
+
+------
+   The server generated these startup warnings when booting
+   2024-03-14T23:31:09.366-04:00: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
+------
+
+test> // create and drop databases, collections
+test> use mydb
+switched to db mydb
+mydb> show dbs
+mydb> show collections
+fifthcollection
+firstcollection
+youcol
+mydb> db.createCollection("acollection");
+{ ok: 1 }
+mydb> db.acollection.insertOne({"name":"bcd"});
+{
+  acknowledged: true,
+  insertedId: ObjectId("661d6dc0f161d291da649a0c")
+}
+
+mydb> show collections;
+acollection
+fifthcollection
+firstcollection
+youcol
+mydb> db.acollection.drop();
+true
+mydb> show collections;
+fifthcollection
+firstcollection
+youcol
+
+
+test>  load("C:/Users/jluo2/Desktop/cs550-202410/mongo1.js")
+true
+school> show collections
+courses
+students
+
+
+School> // find query
+
+school> db.students.find().pretty()
+[
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f051"),
+    sid: 'G11111',
+    lastName: 'Molloy',
+    firstName: 'Penny',
+    birthday: '06/15/2013',
+    courses: [
+      { courseID: 'CS112', grade: 'A' },
+      { courseID: 'CS201', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f052"),
+    sid: 'G22222',
+    lastName: 'Owens',
+    firstName: 'Arthur',
+    birthday: '01/15/2004',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'a' },
+      { courseID: 'MATH114', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f053"),
+    sid: 'G33333',
+    lastName: 'Webserver',
+    firstName: 'Apache',
+    birthday: '03/31/1992',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'B' },
+      { courseID: 'ENGL301', grade: 'c' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f054"),
+    sid: 'G44444',
+    lastName: 'Ellison',
+    firstName: 'Larry',
+    birthday: '07/05/1965',
+    courses: [
+      { courseID: 'ECON103', grade: 'c' },
+      { courseID: 'ECON104', grade: 'F' },
+      { courseID: 'PARK101', grade: 'F' },
+      { courseID: 'CS483', grade: 'F' }
+    ]
+  }
+]
+school> db.students.insertOne({"firstname":"Steve", "gender": "male", "phone":["123", "456"]});
+{
+  acknowledged: true,
+  insertedId: ObjectId("65fa4f5a5430edc7a8a3f05b")
+}
+school> db.students.find().pretty()
+[
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f051"),
+    sid: 'G11111',
+    lastName: 'Molloy',
+    firstName: 'Penny',
+    birthday: '06/15/2013',
+    courses: [
+      { courseID: 'CS112', grade: 'A' },
+      { courseID: 'CS201', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f052"),
+    sid: 'G22222',
+    lastName: 'Owens',
+    firstName: 'Arthur',
+    birthday: '01/15/2004',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'a' },
+      { courseID: 'MATH114', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f053"),
+    sid: 'G33333',
+    lastName: 'Webserver',
+    firstName: 'Apache',
+    birthday: '03/31/1992',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'B' },
+      { courseID: 'ENGL301', grade: 'c' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f054"),
+    sid: 'G44444',
+    lastName: 'Ellison',
+    firstName: 'Larry',
+    birthday: '07/05/1965',
+    courses: [
+      { courseID: 'ECON103', grade: 'c' },
+      { courseID: 'ECON104', grade: 'F' },
+      { courseID: 'PARK101', grade: 'F' },
+      { courseID: 'CS483', grade: 'F' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4f5a5430edc7a8a3f05b"),
+    firstname: 'Steve',
+    gender: 'male',
+    phone: [ '123', '456' ]
+  }
+]
+school> // insertMany()   // pass an array of documents
+
+school> db.students.insertMany([{"firstname":"John", "age": 19}, {"lastname":"Doe","age":20}]);
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId("65fa4fdf5430edc7a8a3f05c"),
+    '1': ObjectId("65fa4fdf5430edc7a8a3f05d")
+  }
+}
+school> db.students.find().pretty()
+[
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f051"),
+    sid: 'G11111',
+    lastName: 'Molloy',
+    firstName: 'Penny',
+    birthday: '06/15/2013',
+    courses: [
+      { courseID: 'CS112', grade: 'A' },
+      { courseID: 'CS201', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f052"),
+    sid: 'G22222',
+    lastName: 'Owens',
+    firstName: 'Arthur',
+    birthday: '01/15/2004',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'a' },
+      { courseID: 'MATH114', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f053"),
+    sid: 'G33333',
+    lastName: 'Webserver',
+    firstName: 'Apache',
+    birthday: '03/31/1992',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'B' },
+      { courseID: 'ENGL301', grade: 'c' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f054"),
+    sid: 'G44444',
+    lastName: 'Ellison',
+    firstName: 'Larry',
+    birthday: '07/05/1965',
+    courses: [
+      { courseID: 'ECON103', grade: 'c' },
+      { courseID: 'ECON104', grade: 'F' },
+      { courseID: 'PARK101', grade: 'F' },
+      { courseID: 'CS483', grade: 'F' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4f5a5430edc7a8a3f05b"),
+    firstname: 'Steve',
+    gender: 'male',
+    phone: [ '123', '456' ]
+  },
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05c"),
+    firstname: 'John',
+    age: 19
+  },
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05d"),
+    lastname: 'Doe',
+    age: 20
+  }
+]
+school> //ordered default or unordered insert
+
+school> db.students.insertMany([{"_id":"ss001", "age":18}, {"_id":"ss002","age":19}, {"_id":"ss001","age":20}, {"_id":"ss003", "age":21}]);
+Uncaught:
+MongoBulkWriteError: E11000 duplicate key error collection: school.students index: _id_ dup key: { _id: "ss001" }
+Result: BulkWriteResult {
+  insertedCount: 2,
+  matchedCount: 0,
+  modifiedCount: 0,
+  deletedCount: 0,
+  upsertedCount: 0,
+  upsertedIds: {},
+  insertedIds: { '0': 'ss001', '1': 'ss002', '2': 'ss001', '3': 'ss003' }
+}
+Write Errors: [
+  WriteError {
+    err: {
+      index: 2,
+      code: 11000,
+      errmsg: 'E11000 duplicate key error collection: school.students index: _id_ dup key: { _id: "ss001" }',
+      errInfo: undefined,
+      op: { _id: 'ss001', age: 20 }
+    }
+  }
+]
+
+
+school> db.students.insertMany([{"_id":"ss001", "age":18}, {"_id":"ss002","age":19}, {"_id":"ss001","age":20}, {"_id":"ss003", "age":21}], {"ordered":false});
+Uncaught:
+MongoBulkWriteError: E11000 duplicate key error collection: school.students index: _id_ dup key: { _id: "ss001" }
+Result: BulkWriteResult {
+  insertedCount: 1,
+  matchedCount: 0,
+  modifiedCount: 0,
+  deletedCount: 0,
+  upsertedCount: 0,
+  upsertedIds: {},
+  insertedIds: { '0': 'ss001', '1': 'ss002', '2': 'ss001', '3': 'ss003' }
+}
+Write Errors: [
+  WriteError {
+    err: {
+      index: 0,
+      code: 11000,
+      errmsg: 'E11000 duplicate key error collection: school.students index: _id_ dup key: { _id: "ss001" }',
+      errInfo: undefined,
+      op: { _id: 'ss001', age: 18 }
+    }
+  },
+  WriteError {
+    err: {
+      index: 1,
+      code: 11000,
+      errmsg: 'E11000 duplicate key error collection: school.students index: _id_ dup key: { _id: "ss002" }',
+      errInfo: undefined,
+      op: { _id: 'ss002', age: 19 }
+    }
+  },
+  WriteError {
+    err: {
+      index: 2,
+      code: 11000,
+      errmsg: 'E11000 duplicate key error collection: school.students index: _id_ dup key: { _id: "ss001" }',
+      errInfo: undefined,
+      op: { _id: 'ss001', age: 20 }
+    }
+  }
+]
+school> db.students.find().pretty();
+[
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f051"),
+    sid: 'G11111',
+    lastName: 'Molloy',
+    firstName: 'Penny',
+    birthday: '06/15/2013',
+    courses: [
+      { courseID: 'CS112', grade: 'A' },
+      { courseID: 'CS201', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f052"),
+    sid: 'G22222',
+    lastName: 'Owens',
+    firstName: 'Arthur',
+    birthday: '01/15/2004',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'a' },
+      { courseID: 'MATH114', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f053"),
+    sid: 'G33333',
+    lastName: 'Webserver',
+    firstName: 'Apache',
+    birthday: '03/31/1992',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'B' },
+      { courseID: 'ENGL301', grade: 'c' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f054"),
+    sid: 'G44444',
+    lastName: 'Ellison',
+    firstName: 'Larry',
+    birthday: '07/05/1965',
+    courses: [
+      { courseID: 'ECON103', grade: 'c' },
+      { courseID: 'ECON104', grade: 'F' },
+      { courseID: 'PARK101', grade: 'F' },
+      { courseID: 'CS483', grade: 'F' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4f5a5430edc7a8a3f05b"),
+    firstname: 'Steve',
+    gender: 'male',
+    phone: [ '123', '456' ]
+  },
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05c"),
+    firstname: 'John',
+    age: 19
+  },
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05d"),
+    lastname: 'Doe',
+    age: 20
+  },
+  { _id: 'ss001', age: 18 },
+  { _id: 'ss002', age: 19 },
+  { _id: 'ss003', age: 21 }
+]
+school> //query documents  find()
+
+school> db.students.findOne();
+{
+  _id: ObjectId("65fa4aef5430edc7a8a3f051"),
+  sid: 'G11111',
+  lastName: 'Molloy',
+  firstName: 'Penny',
+  birthday: '06/15/2013',
+  courses: [
+    { courseID: 'CS112', grade: 'A' },
+    { courseID: 'CS201', grade: 'B' }
+  ]
+}
+
+
+school> db.students.find({"sid":"G44444"});
+[
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f054"),
+    sid: 'G44444',
+    lastName: 'Ellison',
+    firstName: 'Larry',
+    birthday: '07/05/1965',
+    courses: [
+      { courseID: 'ECON103', grade: 'c' },
+      { courseID: 'ECON104', grade: 'F' },
+      { courseID: 'PARK101', grade: 'F' },
+      { courseID: 'CS483', grade: 'F' }
+    ]
+  }
+]
+school> db.students.find({"age":19}).pretty();
+[
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05c"),
+    firstname: 'John',
+    age: 19
+  },
+  { _id: 'ss002', age: 19 }
+]
+school> // i. comparison operators  // single field
+
+school> db.students.find({"age":{$gt:18}});
+[
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05c"),
+    firstname: 'John',
+    age: 19
+  },
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05d"),
+    lastname: 'Doe',
+    age: 20
+  },
+  { _id: 'ss002', age: 19 },
+  { _id: 'ss003', age: 21 }
+]
+school> db.students.find({"age":{$gte:18, $lt:20}});
+[
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05c"),
+    firstname: 'John',
+    age: 19
+  },
+  { _id: 'ss001', age: 18 },
+  { _id: 'ss002', age: 19 }
+]
+school> // multiple fields
+
+school> db.students.find({"age":{$gt:18}, "_id":{$ne:"ss001"}});
+[
+  { _id: 'ss002', age: 19 },
+  { _id: 'ss003', age: 21 },
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05c"),
+    firstname: 'John',
+    age: 19
+  },
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05d"),
+    lastname: 'Doe',
+    age: 20
+  }
+]
+school> db.students.find({"age":{$ne:19}});
+[
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f051"),
+    sid: 'G11111',
+    lastName: 'Molloy',
+    firstName: 'Penny',
+    birthday: '06/15/2013',
+    courses: [
+      { courseID: 'CS112', grade: 'A' },
+      { courseID: 'CS201', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f052"),
+    sid: 'G22222',
+    lastName: 'Owens',
+    firstName: 'Arthur',
+    birthday: '01/15/2004',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'a' },
+      { courseID: 'MATH114', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f053"),
+    sid: 'G33333',
+    lastName: 'Webserver',
+    firstName: 'Apache',
+    birthday: '03/31/1992',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'B' },
+      { courseID: 'ENGL301', grade: 'c' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f054"),
+    sid: 'G44444',
+    lastName: 'Ellison',
+    firstName: 'Larry',
+    birthday: '07/05/1965',
+    courses: [
+      { courseID: 'ECON103', grade: 'c' },
+      { courseID: 'ECON104', grade: 'F' },
+      { courseID: 'PARK101', grade: 'F' },
+      { courseID: 'CS483', grade: 'F' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4f5a5430edc7a8a3f05b"),
+    firstname: 'Steve',
+    gender: 'male',
+    phone: [ '123', '456' ]
+  },
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05d"),
+    lastname: 'Doe',
+    age: 20
+  },
+  { _id: 'ss001', age: 18 },
+  { _id: 'ss003', age: 21 }
+]
+
+
+school> db.students.find({"age":{$in:[20,21]}});
+[
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05d"),
+    lastname: 'Doe',
+    age: 20
+  },
+  { _id: 'ss003', age: 21 }
+]
+school> //ii.  elements operators
+
+school> db.students.find({"age":{$exists:true}});
+[
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05c"),
+    firstname: 'John',
+    age: 19
+  },
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05d"),
+    lastname: 'Doe',
+    age: 20
+  },
+  { _id: 'ss001', age: 18 },
+  { _id: 'ss002', age: 19 },
+  { _id: 'ss003', age: 21 }
+]
+school> db.students.find({"_id":{$type:"string"}});
+[
+  { _id: 'ss001', age: 18 },
+  { _id: 'ss002', age: 19 },
+  { _id: 'ss003', age: 21 }
+]
+
+
+school> db.students.find({"_id":{$type:"objectId"}});
+[
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f051"),
+    sid: 'G11111',
+    lastName: 'Molloy',
+    firstName: 'Penny',
+    birthday: '06/15/2013',
+    courses: [
+      { courseID: 'CS112', grade: 'A' },
+      { courseID: 'CS201', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f052"),
+    sid: 'G22222',
+    lastName: 'Owens',
+    firstName: 'Arthur',
+    birthday: '01/15/2004',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'a' },
+      { courseID: 'MATH114', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f053"),
+    sid: 'G33333',
+    lastName: 'Webserver',
+    firstName: 'Apache',
+    birthday: '03/31/1992',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'B' },
+      { courseID: 'ENGL301', grade: 'c' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f054"),
+    sid: 'G44444',
+    lastName: 'Ellison',
+    firstName: 'Larry',
+    birthday: '07/05/1965',
+    courses: [
+      { courseID: 'ECON103', grade: 'c' },
+      { courseID: 'ECON104', grade: 'F' },
+      { courseID: 'PARK101', grade: 'F' },
+      { courseID: 'CS483', grade: 'F' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4f5a5430edc7a8a3f05b"),
+    firstname: 'Steve',
+    gender: 'male',
+    phone: [ '123', '456' ]
+  },
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05c"),
+    firstname: 'John',
+    age: 19
+  },
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05d"),
+    lastname: 'Doe',
+    age: 20
+  }
+]
+school> /// iii   logical operators   $or take an array
+
+
+school> db.students.find({$or:[{"courses.courseID":"MATH113"}, {"courses.grade":"F"}]}).pretty();
+[
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f052"),
+    sid: 'G22222',
+    lastName: 'Owens',
+    firstName: 'Arthur',
+    birthday: '01/15/2004',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'a' },
+      { courseID: 'MATH114', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f053"),
+    sid: 'G33333',
+    lastName: 'Webserver',
+    firstName: 'Apache',
+    birthday: '03/31/1992',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'B' },
+      { courseID: 'ENGL301', grade: 'c' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f054"),
+    sid: 'G44444',
+    lastName: 'Ellison',
+    firstName: 'Larry',
+    birthday: '07/05/1965',
+    courses: [
+      { courseID: 'ECON103', grade: 'c' },
+      { courseID: 'ECON104', grade: 'F' },
+      { courseID: 'PARK101', grade: 'F' },
+      { courseID: 'CS483', grade: 'F' }
+    ]
+  }
+]
+school> db.students.find({$and:[{"courses.courseID":"CS201"}, {"courses.grade":"B"}]})
+[
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f051"),
+    sid: 'G11111',
+    lastName: 'Molloy',
+    firstName: 'Penny',
+    birthday: '06/15/2013',
+    courses: [
+      { courseID: 'CS112', grade: 'A' },
+      { courseID: 'CS201', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f052"),
+    sid: 'G22222',
+    lastName: 'Owens',
+    firstName: 'Arthur',
+    birthday: '01/15/2004',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'a' },
+      { courseID: 'MATH114', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f053"),
+    sid: 'G33333',
+    lastName: 'Webserver',
+    firstName: 'Apache',
+    birthday: '03/31/1992',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'B' },
+      { courseID: 'ENGL301', grade: 'c' }
+    ]
+  }
+]
+
+
+ db.students.find({"courses.courseID":"CS201", "courses.grade":"B"});
+[
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f051"),
+    sid: 'G11111',
+    lastName: 'Molloy',
+    firstName: 'Penny',
+    birthday: '06/15/2013',
+    courses: [
+      { courseID: 'CS112', grade: 'A' },
+      { courseID: 'CS201', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f052"),
+    sid: 'G22222',
+    lastName: 'Owens',
+    firstName: 'Arthur',
+    birthday: '01/15/2004',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'a' },
+      { courseID: 'MATH114', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f053"),
+    sid: 'G33333',
+    lastName: 'Webserver',
+    firstName: 'Apache',
+    birthday: '03/31/1992',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'B' },
+      { courseID: 'ENGL301', grade: 'c' }
+    ]
+  }
+]
+
+school> // $and specify multiple constraints on the same field
+
+school> db.students.find({$and:[{"age":{$ne:19}}, {"age":{$exists:true}}]});
+
+[
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05d"),
+    lastname: 'Doe',
+    age: 20
+  },
+  { _id: 'ss001', age: 18 },
+  { _id: 'ss003', age: 21 }
+]
+school> // 2) array fields
+
+school> // i. exact match
+
+
+school> db.students.insertOne({"lastname":"Pete", "phone":["123","456","789"]})
+{
+  acknowledged: true,
+  insertedId: ObjectId("65fa5a505430edc7a8a3f05e")
+}
+school> db.students.find();
+[
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f051"),
+    sid: 'G11111',
+    lastName: 'Molloy',
+    firstName: 'Penny',
+    birthday: '06/15/2013',
+    courses: [
+      { courseID: 'CS112', grade: 'A' },
+      { courseID: 'CS201', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f052"),
+    sid: 'G22222',
+    lastName: 'Owens',
+    firstName: 'Arthur',
+    birthday: '01/15/2004',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'a' },
+      { courseID: 'MATH114', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f053"),
+    sid: 'G33333',
+    lastName: 'Webserver',
+    firstName: 'Apache',
+    birthday: '03/31/1992',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'B' },
+      { courseID: 'ENGL301', grade: 'c' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f054"),
+    sid: 'G44444',
+    lastName: 'Ellison',
+    firstName: 'Larry',
+    birthday: '07/05/1965',
+    courses: [
+      { courseID: 'ECON103', grade: 'c' },
+      { courseID: 'ECON104', grade: 'F' },
+      { courseID: 'PARK101', grade: 'F' },
+      { courseID: 'CS483', grade: 'F' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4f5a5430edc7a8a3f05b"),
+    firstname: 'Steve',
+    gender: 'male',
+    phone: [ '123', '456' ]
+  },
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05c"),
+    firstname: 'John',
+    age: 19
+  },
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05d"),
+    lastname: 'Doe',
+    age: 20
+  },
+  { _id: 'ss001', age: 18 },
+  { _id: 'ss002', age: 19 },
+  { _id: 'ss003', age: 21 },
+  {
+    _id: ObjectId("65fa5a505430edc7a8a3f05e"),
+    lastname: 'Pete',
+    phone: [ '123', '456', '789' ]
+  }
+]
+school> db.students.find({"phone":["123","456"]});
+[
+  {
+    _id: ObjectId("65fa4f5a5430edc7a8a3f05b"),
+    firstname: 'Steve',
+    gender: 'male',
+    phone: [ '123', '456' ]
+  }
+]
+school> //ii match anywhere in an array
+
+school> db.students.find({"phone":"123"});
+[
+  {
+    _id: ObjectId("65fa4f5a5430edc7a8a3f05b"),
+    firstname: 'Steve',
+    gender: 'male',
+    phone: [ '123', '456' ]
+  },
+  {
+    _id: ObjectId("65fa5a505430edc7a8a3f05e"),
+    lastname: 'Pete',
+    phone: [ '123', '456', '789' ]
+  }
+]
+school> //iii. match specific element of an array
+
+school> db.students.find({"phone.0":"123"});
+  {
+    _id: ObjectId("65fa4f5a5430edc7a8a3f05b"),
+    firstname: 'Steve',
+    gender: 'male',
+    phone: [ '123', '456' ]
+  },
+  {
+    _id: ObjectId("65fa5a505430edc7a8a3f05e"),
+    lastname: 'Pete',
+    phone: [ '123', '456', '789' ]
+  }
+]
+school> db.students.find({"phone.2":"789"});
+[
+  {
+    _id: ObjectId("65fa5a505430edc7a8a3f05e"),
+    lastname: 'Pete',
+    phone: [ '123', '456', '789' ]
+  }
+]
+school> // 3) cursors
+
+school> // 4) projections passed as the second argument to find()
+
+school> db.students.find({}, {"birthday":1})
+[
+  { _id: ObjectId("65fa4aef5430edc7a8a3f051"), birthday: '06/15/2013' },
+  { _id: ObjectId("65fa4aef5430edc7a8a3f052"), birthday: '01/15/2004' },
+  { _id: ObjectId("65fa4aef5430edc7a8a3f053"), birthday: '03/31/1992' },
+  { _id: ObjectId("65fa4aef5430edc7a8a3f054"), birthday: '07/05/1965' },
+  { _id: ObjectId("65fa4f5a5430edc7a8a3f05b") },
+  { _id: ObjectId("65fa4fdf5430edc7a8a3f05c") },
+  { _id: ObjectId("65fa4fdf5430edc7a8a3f05d") },
+  { _id: 'ss001' },
+  { _id: 'ss002' },
+  { _id: 'ss003' },
+  { _id: ObjectId("65fa5a505430edc7a8a3f05e") }
+]
+
+
+school> db.students.find({"birthday":{$exists:true}}, {"birthday":1, "_id":0})
+[
+  { birthday: '06/15/2013' },
+  { birthday: '01/15/2004' },
+  { birthday: '03/31/1992' },
+  { birthday: '07/05/1965' }
+]
+school> db.students.find({}, {"birthday":0, "age":0,"_id":0})
+[
+  {
+    sid: 'G11111',
+    lastName: 'Molloy',
+    firstName: 'Penny',
+    courses: [
+      { courseID: 'CS112', grade: 'A' },
+      { courseID: 'CS201', grade: 'B' }
+    ]
+  },
+  {
+    sid: 'G22222',
+    lastName: 'Owens',
+    firstName: 'Arthur',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'a' },
+      { courseID: 'MATH114', grade: 'B' }
+    ]
+  },
+  {
+    sid: 'G33333',
+    lastName: 'Webserver',
+    firstName: 'Apache',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'B' },
+      { courseID: 'ENGL301', grade: 'c' }
+    ]
+  },
+  {
+    sid: 'G44444',
+    lastName: 'Ellison',
+    firstName: 'Larry',
+    courses: [
+      { courseID: 'ECON103', grade: 'c' },
+      { courseID: 'ECON104', grade: 'F' },
+      { courseID: 'PARK101', grade: 'F' },
+      { courseID: 'CS483', grade: 'F' }
+    ]
+  },
+  { firstname: 'Steve', gender: 'male', phone: [ '123', '456' ] },
+  { firstname: 'John' },
+  { lastname: 'Doe' },
+  {},
+  {},
+  {},
+  { lastname: 'Pete', phone: [ '123', '456', '789' ] }
+]
+school> //6.upddate documents   1) upddateOne({filter}, {update operator:{}}) upddate the first document matches the filter
+
+school> db.courses.find()
+[
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f055"),
+    courseID: 'MATH113',
+    professor: 'Dr. Calc',
+    availableSeats: 5
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f056"),
+    courseID: 'ECON103',
+    professor: 'Dr. Einstein',
+    availableSeats: 0
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f057"),
+    courseID: 'CS112',
+    professor: 'Dr. Dijstria',
+    availableSeats: 22
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f058"),
+    courseID: 'CS483',
+    professor: 'Dr. Dantzig',
+    availableSeats: 22
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f059"),
+    courseID: 'CS201',
+    professor: 'Dr. Dijstria',
+    availableSeats: 17
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f05a"),
+    courseID: 'MATH114',
+    professor: 'Dr. Markov',
+    availableSeats: 11
+  }
+]
+
+
+
+school> db.courses.updateOne({"professor":"Dr. Dijstria"}, {$set:{"availableSeats":40}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+school> db.courses.find()
+[
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f055"),
+    courseID: 'MATH113',
+    professor: 'Dr. Calc',
+    availableSeats: 5
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f056"),
+    courseID: 'ECON103',
+    professor: 'Dr. Einstein',
+    availableSeats: 0
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f057"),
+    courseID: 'CS112',
+    professor: 'Dr. Dijstria',
+    availableSeats: 40
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f058"),
+    courseID: 'CS483',
+    professor: 'Dr. Dantzig',
+    availableSeats: 22
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f059"),
+    courseID: 'CS201',
+    professor: 'Dr. Dijstria',
+    availableSeats: 17
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f05a"),
+    courseID: 'MATH114',
+    professor: 'Dr. Markov',
+    availableSeats: 11
+  }
+]
+school> // updateMany // update all matching documents
+
+school> db.courses.updateMany({"professor":"Dr. Dijstria"}, {$set:{"availableSeats":35}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 2,
+  modifiedCount: 2,
+  upsertedCount: 0
+}
+school> db.courses.find()
+[
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f055"),
+    courseID: 'MATH113',
+    professor: 'Dr. Calc',
+    availableSeats: 5
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f056"),
+    courseID: 'ECON103',
+    professor: 'Dr. Einstein',
+    availableSeats: 0
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f057"),
+    courseID: 'CS112',
+    professor: 'Dr. Dijstria',
+    availableSeats: 35
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f058"),
+    courseID: 'CS483',
+    professor: 'Dr. Dantzig',
+    availableSeats: 22
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f059"),
+    courseID: 'CS201',
+    professor: 'Dr. Dijstria',
+    availableSeats: 35
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f05a"),
+    courseID: 'MATH114',
+    professor: 'Dr. Markov',
+    availableSeats: 11
+  }
+]
+school> // 3) update operators
+
+school> // set
+
+school> // increment  inc
+
+school> db.courses.updateOne({"courseID":"MATH113"}, {$inc:{"availableSeats":5}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+school> db.courses.find()
+[
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f055"),
+    courseID: 'MATH113',
+    professor: 'Dr. Calc',
+    availableSeats: 10
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f056"),
+    courseID: 'ECON103',
+    professor: 'Dr. Einstein',
+    availableSeats: 0
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f057"),
+    courseID: 'CS112',
+    professor: 'Dr. Dijstria',
+    availableSeats: 35
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f058"),
+    courseID: 'CS483',
+    professor: 'Dr. Dantzig',
+    availableSeats: 22
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f059"),
+    courseID: 'CS201',
+    professor: 'Dr. Dijstria',
+    availableSeats: 35
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f05a"),
+    courseID: 'MATH114',
+    professor: 'Dr. Markov',
+    availableSeats: 11
+  }
+]
+school> // $push
+
+
+school> db.students.updateOne({"firstName":"Larry"}, {$push:{"courses":{"courseID":"MATH113","grade":"C"}}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+school> db.students.find();
+[
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f051"),
+    sid: 'G11111',
+    lastName: 'Molloy',
+    firstName: 'Penny',
+    birthday: '06/15/2013',
+    courses: [
+      { courseID: 'CS112', grade: 'A' },
+      { courseID: 'CS201', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f052"),
+    sid: 'G22222',
+    lastName: 'Owens',
+    firstName: 'Arthur',
+    birthday: '01/15/2004',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'a' },
+      { courseID: 'MATH114', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f053"),
+    sid: 'G33333',
+    lastName: 'Webserver',
+    firstName: 'Apache',
+    birthday: '03/31/1992',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'B' },
+      { courseID: 'ENGL301', grade: 'c' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f054"),
+    sid: 'G44444',
+    lastName: 'Ellison',
+    firstName: 'Larry',
+    birthday: '07/05/1965',
+    courses: [
+      { courseID: 'ECON103', grade: 'c' },
+      { courseID: 'ECON104', grade: 'F' },
+      { courseID: 'PARK101', grade: 'F' },
+      { courseID: 'CS483', grade: 'F' },
+      { courseID: 'MATH113', grade: 'C' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4f5a5430edc7a8a3f05b"),
+    firstname: 'Steve',
+    gender: 'male',
+    phone: [ '123', '456' ]
+  },
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05c"),
+    firstname: 'John',
+    age: 19
+  },
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05d"),
+    lastname: 'Doe',
+    age: 20
+  },
+  { _id: 'ss001', age: 18 },
+  { _id: 'ss002', age: 19 },
+  { _id: 'ss003', age: 21 },
+  {
+    _id: ObjectId("65fa5a505430edc7a8a3f05e"),
+    lastname: 'Pete',
+    phone: [ '123', '456', '789' ]
+  }
+]
+school> // append the arrray as one element
+
+school> db.students.updateOne({"firstname":"John"}, {$push:{"phone":["456", "789"]}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+school> db.students.find();
+[
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f051"),
+    sid: 'G11111',
+    lastName: 'Molloy',
+    firstName: 'Penny',
+    birthday: '06/15/2013',
+    courses: [
+      { courseID: 'CS112', grade: 'A' },
+      { courseID: 'CS201', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f052"),
+    sid: 'G22222',
+    lastName: 'Owens',
+    firstName: 'Arthur',
+    birthday: '01/15/2004',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'a' },
+      { courseID: 'MATH114', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f053"),
+    sid: 'G33333',
+    lastName: 'Webserver',
+    firstName: 'Apache',
+    birthday: '03/31/1992',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'B' },
+      { courseID: 'ENGL301', grade: 'c' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f054"),
+    sid: 'G44444',
+    lastName: 'Ellison',
+    firstName: 'Larry',
+    birthday: '07/05/1965',
+    courses: [
+      { courseID: 'ECON103', grade: 'c' },
+      { courseID: 'ECON104', grade: 'F' },
+      { courseID: 'PARK101', grade: 'F' },
+      { courseID: 'CS483', grade: 'F' },
+      { courseID: 'MATH113', grade: 'C' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4f5a5430edc7a8a3f05b"),
+    firstname: 'Steve',
+    gender: 'male',
+    phone: [ '123', '456' ]
+  },
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05c"),
+    firstname: 'John',
+    age: 19,
+    phone: [ [ '456', '789' ] ]
+  },
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05d"),
+    lastname: 'Doe',
+    age: 20
+  },
+  { _id: 'ss001', age: 18 },
+  { _id: 'ss002', age: 19 },
+  { _id: 'ss003', age: 21 },
+  {
+    _id: ObjectId("65fa5a505430edc7a8a3f05e"),
+    lastname: 'Pete',
+    phone: [ '123', '456', '789' ]
+  }
+]
+school> // $each
+
+school> db.students.updateOne({"firstname":"John"}, {$push:{"phone":{$each:["456", "789"]}}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+school> db.students.find();
+[
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f051"),
+    sid: 'G11111',
+    lastName: 'Molloy',
+    firstName: 'Penny',
+    birthday: '06/15/2013',
+    courses: [
+      { courseID: 'CS112', grade: 'A' },
+      { courseID: 'CS201', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f052"),
+    sid: 'G22222',
+    lastName: 'Owens',
+    firstName: 'Arthur',
+    birthday: '01/15/2004',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'a' },
+      { courseID: 'MATH114', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f053"),
+    sid: 'G33333',
+    lastName: 'Webserver',
+    firstName: 'Apache',
+    birthday: '03/31/1992',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'B' },
+      { courseID: 'ENGL301', grade: 'c' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f054"),
+    sid: 'G44444',
+    lastName: 'Ellison',
+    firstName: 'Larry',
+    birthday: '07/05/1965',
+    courses: [
+      { courseID: 'ECON103', grade: 'c' },
+      { courseID: 'ECON104', grade: 'F' },
+      { courseID: 'PARK101', grade: 'F' },
+      { courseID: 'CS483', grade: 'F' },
+      { courseID: 'MATH113', grade: 'C' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4f5a5430edc7a8a3f05b"),
+    firstname: 'Steve',
+    gender: 'male',
+    phone: [ '123', '456' ]
+  },
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05c"),
+    firstname: 'John',
+    age: 19,
+    phone: [ [ '456', '789' ], '456', '789' ]
+  },
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05d"),
+    lastname: 'Doe',
+    age: 20
+  },
+  { _id: 'ss001', age: 18 },
+  { _id: 'ss002', age: 19 },
+  { _id: 'ss003', age: 21 },
+  {
+    _id: ObjectId("65fa5a505430edc7a8a3f05e"),
+    lastname: 'Pete',
+    phone: [ '123', '456', '789' ]
+  }
+]
+school> //unset
+
+
+school> db.students.updateOne({"firstname":"John"},{$unset:{"phone":""}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+school> db.students.find();
+[
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f051"),
+    sid: 'G11111',
+    lastName: 'Molloy',
+    firstName: 'Penny',
+    birthday: '06/15/2013',
+    courses: [
+      { courseID: 'CS112', grade: 'A' },
+      { courseID: 'CS201', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f052"),
+    sid: 'G22222',
+    lastName: 'Owens',
+    firstName: 'Arthur',
+    birthday: '01/15/2004',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'a' },
+      { courseID: 'MATH114', grade: 'B' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f053"),
+    sid: 'G33333',
+    lastName: 'Webserver',
+    firstName: 'Apache',
+    birthday: '03/31/1992',
+    courses: [
+      { courseID: 'MATH113', grade: 'c' },
+      { courseID: 'CS201', grade: 'B' },
+      { courseID: 'ENGL301', grade: 'c' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f054"),
+    sid: 'G44444',
+    lastName: 'Ellison',
+    firstName: 'Larry',
+    birthday: '07/05/1965',
+    courses: [
+      { courseID: 'ECON103', grade: 'c' },
+      { courseID: 'ECON104', grade: 'F' },
+      { courseID: 'PARK101', grade: 'F' },
+      { courseID: 'CS483', grade: 'F' },
+      { courseID: 'MATH113', grade: 'C' }
+    ]
+  },
+  {
+    _id: ObjectId("65fa4f5a5430edc7a8a3f05b"),
+    firstname: 'Steve',
+    gender: 'male',
+    phone: [ '123', '456' ]
+  },
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05c"),
+    firstname: 'John',
+    age: 19
+  },
+  {
+    _id: ObjectId("65fa4fdf5430edc7a8a3f05d"),
+    lastname: 'Doe',
+    age: 20
+  },
+  { _id: 'ss001', age: 18 },
+  { _id: 'ss002', age: 19 },
+  { _id: 'ss003', age: 21 },
+  {
+    _id: ObjectId("65fa5a505430edc7a8a3f05e"),
+    lastname: 'Pete',
+    phone: [ '123', '456', '789' ]
+  }
+]
+
+
+school> //rename
+
+school> db.courses.updateMany({}, {$rename:{"availableSeats":"SeatsAvailable"}});
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 6,
+  modifiedCount: 6,
+  upsertedCount: 0
+}
+school> db.courses.find()
+[
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f055"),
+    courseID: 'MATH113',
+    professor: 'Dr. Calc',
+    SeatsAvailable: 10
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f056"),
+    courseID: 'ECON103',
+    professor: 'Dr. Einstein',
+    SeatsAvailable: 0
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f057"),
+    courseID: 'CS112',
+    professor: 'Dr. Dijstria',
+    SeatsAvailable: 35
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f058"),
+    courseID: 'CS483',
+    professor: 'Dr. Dantzig',
+    SeatsAvailable: 22
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f059"),
+    courseID: 'CS201',
+    professor: 'Dr. Dijstria',
+    SeatsAvailable: 35
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f05a"),
+    courseID: 'MATH114',
+    professor: 'Dr. Markov',
+    SeatsAvailable: 11
+  }
+]
+school> // 4) upserts // third argument
+
+school> db.courses.updateOne({"courseID":"MATH112"}, {$set:{"professor":"Dr. Wu", "SeatsAvailable":20}}, {upsert:true})
+{
+  acknowledged: true,
+  insertedId: ObjectId("65fa621db1d68c5befa48690"),
+  matchedCount: 0,
+  modifiedCount: 0,
+  upsertedCount: 1
+}
+school> db.courses.find()
+[
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f055"),
+    courseID: 'MATH113',
+    professor: 'Dr. Calc',
+    SeatsAvailable: 10
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f056"),
+    courseID: 'ECON103',
+    professor: 'Dr. Einstein',
+    SeatsAvailable: 0
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f057"),
+    courseID: 'CS112',
+    professor: 'Dr. Dijstria',
+    SeatsAvailable: 35
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f058"),
+    courseID: 'CS483',
+    professor: 'Dr. Dantzig',
+    SeatsAvailable: 22
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f059"),
+    courseID: 'CS201',
+    professor: 'Dr. Dijstria',
+    SeatsAvailable: 35
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f05a"),
+    courseID: 'MATH114',
+    professor: 'Dr. Markov',
+    SeatsAvailable: 11
+  },
+  {
+    _id: ObjectId("65fa621db1d68c5befa48690"),
+    courseID: 'MATH112',
+    SeatsAvailable: 20,
+    professor: 'Dr. Wu'
+  }
+]
+school> // 5) replaceOne
+
+school> db.courses.replaceOne({"courseID":"MATH112"}, {"courseID":"MATH112", "professor":"Dr. Wu", "SeatsAvailable":30});
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+school> db.courses.find()
+[
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f055"),
+    courseID: 'MATH113',
+    professor: 'Dr. Calc',
+    SeatsAvailable: 10
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f056"),
+    courseID: 'ECON103',
+    professor: 'Dr. Einstein',
+    SeatsAvailable: 0
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f057"),
+    courseID: 'CS112',
+    professor: 'Dr. Dijstria',
+    SeatsAvailable: 35
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f058"),
+    courseID: 'CS483',
+    professor: 'Dr. Dantzig',
+    SeatsAvailable: 22
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f059"),
+    courseID: 'CS201',
+    professor: 'Dr. Dijstria',
+    SeatsAvailable: 35
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f05a"),
+    courseID: 'MATH114',
+    professor: 'Dr. Markov',
+    SeatsAvailable: 11
+  },
+  {
+    _id: ObjectId("65fa621db1d68c5befa48690"),
+    courseID: 'MATH112',
+    professor: 'Dr. Wu',
+    SeatsAvailable: 30
+  }
+]
+school> // 7) delete documents
+
+school> // 1.  deleteOne
+
+school> db.courses.deleteOne({"professor":"Dr. Wu"});
+{ acknowledged: true, deletedCount: 1 }
+school> db.courses.find()
+[
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f055"),
+    courseID: 'MATH113',
+    professor: 'Dr. Calc',
+    SeatsAvailable: 10
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f056"),
+    courseID: 'ECON103',
+    professor: 'Dr. Einstein',
+    SeatsAvailable: 0
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f057"),
+    courseID: 'CS112',
+    professor: 'Dr. Dijstria',
+    SeatsAvailable: 35
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f058"),
+    courseID: 'CS483',
+    professor: 'Dr. Dantzig',
+    SeatsAvailable: 22
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f059"),
+    courseID: 'CS201',
+    professor: 'Dr. Dijstria',
+    SeatsAvailable: 35
+  },
+  {
+    _id: ObjectId("65fa4aef5430edc7a8a3f05a"),
+    courseID: 'MATH114',
+    professor: 'Dr. Markov',
+    SeatsAvailable: 11
+  }
+]
+school> // 8. count()
+
+school> db.students.find().count()
+11
+school> db.courses.find({"age":18}).count();
+0

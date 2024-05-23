@@ -1,0 +1,173 @@
+package com.dbproject2;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.sql.*;
+import java.util.*;
+
+public class Student {
+	static Connection con;
+	static Statement stmt;
+	
+	public static void main(String[] args) {
+		connectToDatabase();
+	}
+
+	public static void connectToDatabase(){
+		String driverPrefixURL="jdbc:oracle:thin:@";
+		String jdbc_url="artemis.vsnet.gmu.edu:1521/vse18c.vsnet.gmu.edu";	
+		Scanner scanner = new Scanner(System.in);
+		
+        //String username="jgutam";
+       // String password="oalrygru";
+        
+        try{
+    	    //Register Oracle driver
+                DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+            } catch (Exception e) {
+                System.out.println("Failed to load JDBC/ODBC driver.");
+                return;
+        }
+        
+        try{
+        	System.out.println("Connecting to database..");
+        	System.out.println("Enter username: ");
+        	String username = scanner.nextLine();
+        	System.out.println("Enter password: ");
+        	String password = scanner.nextLine();
+        	
+        	
+            System.out.println(driverPrefixURL+jdbc_url);
+            con=DriverManager.getConnection(driverPrefixURL+jdbc_url, username, password);
+            DatabaseMetaData dbmd=con.getMetaData();
+            stmt=con.createStatement();
+
+            System.out.println("Connected.");
+
+            if(dbmd==null){
+                System.out.println("No database meta data");
+                return;
+            }
+            else {
+                System.out.println("Database Product Name: "+dbmd.getDatabaseProductName());
+                System.out.println("Database Product Version: "+dbmd.getDatabaseProductVersion());
+                System.out.println("Database Driver Name: "+dbmd.getDriverName());
+                System.out.println("Database Driver Version: "+dbmd.getDriverVersion());
+            }
+            
+            System.out.println("Enter the location of paper.sql script file: ");
+            String scriptLocation = scanner.nextLine();
+            
+         // Execute SQL script
+            String sqlScript = new String(Files.readAllBytes(Paths.get(scriptLocation)));
+            stmt.executeUpdate(sqlScript);
+
+            System.out.println("Database is ready for search.");
+            
+            while(true){
+            	System.out.println("\nMenu:");
+                System.out.println("1. View table contents");
+                System.out.println("2. Search by PUBLICATIONID");
+                System.out.println("3. Search by one or more attributes");
+                System.out.println("4. Exit");
+                
+                System.out.print("Enter your choice: ");
+                int choice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+                
+                switch (choice) {
+                case 1:
+                    viewTableContents(con, scanner);
+                    break;
+                case 2:
+                    searchByPublicationID(con, scanner);
+                    break;
+                case 3:
+                    searchByAttributes(con, scanner);
+                    break;
+                case 4:
+                    System.out.println("Exiting program...");
+                    return;
+                default:
+                    System.out.println("Invalid option. Please try again.");
+                }
+            }
+        } catch( Exception e) {
+        	e.printStackTrace();
+        } finally {
+        	try {
+                if (stmt != null) stmt.close();
+                if (con != null) con.close();
+                scanner.close();
+            } catch (SQLException se) {
+                se.printStackTrace();
+            }
+        }
+    }
+	
+	private static void viewTableContents(Connection conn, Scanner scanner) throws SQLException {
+		System.out.print("View PUBLICATIONS (Yes/No): ");
+		String viewPublications = scanner.nextLine().trim().toLowerCase();
+		System.out.print("View AUTHORS (Yes/No): ");
+		String viewAuthors = scanner.nextLine().trim().toLowerCase();
+		
+		if (viewPublications.equals("yes")) {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM PUBLICATIONS");
+            System.out.println("\n--- PUBLICATIONS ---");
+            while (rs.next()) {
+                System.out.println("PUBLICATIONID: " + rs.getInt("PUBLICATIONID") +
+                        ", TITLE: " + rs.getString("TITLE") +
+                        ", YEAR: " + rs.getInt("YEAR") +
+                        ", TYPE: " + rs.getString("TYPE") +
+                        ", SUMMARY: " + rs.getString("SUMMARY"));
+            }
+            rs.close();
+            stmt.close();
+        }
+		
+		if (viewAuthors.equals("yes")) {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM AUTHORS");
+            System.out.println("\n--- AUTHORS ---");
+            while (rs.next()) {
+                System.out.println("PUBLICATIONID: " + rs.getInt("PUBLICATIONID") +
+                        ", AUTHOR: " + rs.getString("AUTHOR"));
+            }
+            rs.close();
+            stmt.close();
+        }
+	}
+	
+	private static void searchByPublicationID(Connection conn, Scanner scanner) throws SQLException {
+		System.out.print("Enter PUBLICATIONID: ");
+		int publicationID = scanner.nextInt();
+		scanner.nextLine();
+		
+		PreparedStatement stmt = conn.prepareStatement("SELECT P.*, COUNT(A.AUTHOR) AS NUM_AUTHORS " +
+                "FROM PUBLICATIONS P LEFT JOIN AUTHORS A ON P.PUBLICATIONID = A.PUBLICATIONID " +
+                "WHERE P.PUBLICATIONID = ?");
+		stmt.setInt(1, publicationID);
+		ResultSet rs = stmt.executeQuery();
+		
+		if (rs.next()) {
+            System.out.println("\n--- SEARCH RESULT ---");
+            System.out.println("PUBLICATIONID: " + rs.getInt("PUBLICATIONID") +
+                    ", TITLE: " + rs.getString("TITLE") +
+                    ", YEAR: " + rs.getInt("YEAR") +
+                    ", TYPE: " + rs.getString("TYPE") +
+                    ", SUMMARY: " + rs.getString("SUMMARY") +
+                    ", NUM_AUTHORS: " + rs.getInt("NUM_AUTHORS"));
+        } else {
+            System.out.println("No result found.");
+        }
+		
+		rs.close();
+        stmt.close();
+	}
+	
+	private static void searchByAttributes(Connection conn, Scanner scanner) throws SQLException {
+	}
+	}
+}

@@ -1,0 +1,32 @@
+Part 1:
+
+load("C:/Users/johns/Desktop/GMU/Spring 2024/550/Project 3/customerTransactions.js");
+db.product.count();
+db.customer.count();
+db.transactions.count();
+db.transactions_contains.count();
+db.customer.aggregate(
+{$unwind: '$transactions'},
+{$group: {'_id': null, tcount: {$sum:1}}},
+);
+
+Part 2:
+1.  db.product.find({ category: 'Alcohol' }, {upc: 1, _id:0});
+2. db.customer.find({ "transaction.transaction_ID": '104' }, { customer_ID: 1, _id: 0 });
+3.db.customer.aggregate([
+  { $match: { "transaction.0": { $exists: true } } }, // Filters customers with at least one transaction
+  { $project: { _id: 1, first_transaction_total: { $arrayElemAt: ["$transaction.total", 0] } } }, // Projects the total of the first transaction
+  { $match: { first_transaction_total: { $lt: 50 } } }, // Filters transactions with total less than $50
+  { $count: "customers_with_first_transaction_lt_50" } // Counts the number of customers
+])
+4. db.product.find({ product_Description: { $exists: false } }, { product_name: 1, _id: 0 })
+5. db.product.count({ brand: { $in: ['Pepsi', 'Coca-Cola'] } })
+
+6.db.product.find({ marked_price: { $lt: 10 }, quantity: { $gte: 50 } }, { product_name: 1, _id: 0 })
+7. db.customer.count({ transaction: { $exists: false } })
+8. db.customer.aggregate([
+  { $unwind: "$transaction" }, // Unwind the transaction array
+  { $lookup: { from: "transaction_contains", localField: "transaction.transaction_contains", foreignField: "_id", as: "contains" } }, // Look up the transaction_contains collection
+  { $match: { "contains.upc": { $in: db.product.distinct("upc", { category: "Alcohol" }) } } }, // Match transactions containing alcoholic beverages
+  { $project: { "transaction.transaction_ID": 1, _id: 0 } } // Project only the transaction_ID
+])

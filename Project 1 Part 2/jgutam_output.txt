@@ -1,0 +1,24 @@
+
+Table CUSTOMERS created.
+
+
+Commit complete.
+
+
+Table TRANSACTIONS created.
+
+
+Commit complete.
+
+
+Table PRODUCTS created.
+
+
+Commit complete.
+
+
+Table CONTAINS created.
+
+
+Commit complete.
+
